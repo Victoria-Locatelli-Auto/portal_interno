@@ -1,0 +1,8 @@
+{
+    "chat.tools.terminal.autoApprove": {
+        "/^cd /var/www/default && php -l config/database\\.php$/": {
+            "approve": true,
+            "matchCommandLine": true
+        }
+    }
+}

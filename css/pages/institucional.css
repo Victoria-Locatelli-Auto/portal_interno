@@ -1,0 +1,85 @@
+.institutional-page {
+    color: #ffffff;
+}
+
+.institutional-wrap {
+    width: min(1180px, 100%);
+    margin: 0 auto;
+    text-align: center;
+}
+
+.institutional-title {
+    font-size: clamp(36px, 5vw, 52px);
+    font-weight: 700;
+    margin-bottom: 24px;
+}
+
+.institutional-cards {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 22px;
+    margin-bottom: 26px;
+}
+
+.institutional-card,
+.institutional-section {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 16px;
+    overflow: hidden;
+    color: #111827;
+}
+
+.institutional-card {
+    min-height: 210px;
+}
+
+.institutional-card h2,
+.institutional-section h2 {
+    background: var(--azul);
+    color: #ffffff;
+    padding: 12px;
+    font-size: 22px;
+    text-align: center;
+}
+
+.institutional-card p {
+    padding: 20px;
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+.institutional-section {
+    margin-bottom: 24px;
+    text-align: left;
+}
+
+.institutional-section-body {
+    padding: 24px;
+}
+
+.institutional-section-body p {
+    line-height: 1.9;
+    font-size: 16px;
+}
+
+.institutional-section-body p + p {
+    margin-top: 18px;
+}
+
+.manifesto-box {
+    padding: 18px;
+}
+
+.manifesto-box img {
+    width: 100%;
+    max-width: 1000px;
+    border-radius: 10px;
+    display: block;
+    margin: 0 auto;
+}
+
+@media (max-width: 900px) {
+    .institutional-cards {
+        grid-template-columns: 1fr;
+    }
+}

@@ -1,0 +1,165 @@
+.edit-employee-page {
+    max-width: 1100px;
+    margin: 0 auto;
+}
+
+.edit-employee-grid {
+    display: grid;
+    grid-template-columns: 320px 1fr;
+    gap: 20px;
+}
+
+.employee-card {
+    overflow: hidden;
+    padding: 0;
+}
+
+.employee-card__header {
+    background: var(--azul);
+    color: var(--branco);
+    padding: 15px;
+    font-weight: 700;
+}
+
+.employee-card__body {
+    padding: 20px;
+}
+
+.employee-profile {
+    text-align: center;
+}
+
+.employee-profile__avatar {
+    width: 100px;
+    height: 100px;
+    margin: 0 auto 15px;
+    border-radius: 50%;
+    background: #eeeeee;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 40px;
+}
+
+.employee-profile__name {
+    font-size: 22px;
+    font-weight: 700;
+}
+
+.employee-profile__role {
+    color: #555555;
+    margin-top: 4px;
+}
+
+.employee-profile__badges {
+    display: flex;
+    justify-content: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-top: 10px;
+}
+
+.badge--success {
+    background: var(--verde-bg);
+    color: var(--verde-texto);
+}
+
+.badge--danger {
+    background: var(--vermelho-bg);
+    color: var(--vermelho-texto);
+}
+
+.badge--warning {
+    background: var(--amarelo-bg);
+    color: var(--amarelo-texto);
+}
+
+.employee-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+}
+
+.employee-form__group--full {
+    grid-column: 1 / -1;
+}
+
+.employee-form__group label,
+.employee-form__label {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 700;
+    color: var(--azul);
+}
+
+.employee-form__group input,
+.employee-form__group select {
+    width: 100%;
+    padding: 12px 14px;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 10px;
+    font-size: 14px;
+    background: var(--branco);
+}
+
+.employee-form__group input:focus,
+.employee-form__group select:focus {
+    outline: none;
+    border-color: var(--azul-borda);
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.12);
+}
+
+.employee-form__group input[readonly] {
+    background: #f3f4f6;
+}
+
+.employee-form__hint {
+    display: block;
+    color: #6b7280;
+    margin-top: 6px;
+}
+
+.employee-form__checkboxes {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    padding-top: 8px;
+}
+
+.employee-form__checkbox {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 0;
+    color: #111827;
+    font-weight: 600;
+}
+
+.employee-form__checkbox input {
+    width: auto;
+    padding: 0;
+}
+
+.employee-form__actions {
+    display: flex;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin-top: 16px;
+}
+
+.alert-success {
+    background: var(--verde-bg);
+    color: var(--verde-texto);
+}
+
+.alert-danger {
+    background: var(--vermelho-bg);
+    color: var(--vermelho-texto);
+}
+
+@media (max-width: 900px) {
+    .edit-employee-grid,
+    .employee-form {
+        grid-template-columns: 1fr;
+    }
+}

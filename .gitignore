@@ -1,0 +1,25 @@
+# Local/system files
+.vscode/
+.DS_Store
+Thumbs.db
+*.log
+
+# Dependencies and binaries
+/vendor/
+composer.phar
+
+# Runtime/generated files
+/uploads/
+/tmp/
+*.cache
+
+# Local configuration with secrets
+/config/*.php
+!/config/*.example.php
+.env
+.env.*
+!/portalmcm/.env.example
+
+# Generated/temporary diagnostics
+process.log
+uploads/process.log

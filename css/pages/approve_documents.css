@@ -1,0 +1,373 @@
+.approve-page {
+    width: min(1240px, 100%);
+    margin: 0 auto;
+}
+
+.approve-panel {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 20px;
+    padding: 24px;
+    color: #111827;
+}
+
+.approve-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 28px;
+    flex-wrap: wrap;
+}
+
+.approve-header h1 {
+    color: var(--azul);
+    font-size: 34px;
+    margin-bottom: 8px;
+}
+
+.approve-header p {
+    color: #6b7280;
+}
+
+.pending-count {
+    background: var(--amarelo-bg);
+    color: var(--amarelo-texto);
+    padding: 10px 16px;
+    border-radius: 999px;
+    font-weight: 700;
+    border: 1px solid #f1df9b;
+}
+
+.approval-message {
+    padding: 16px;
+    border-radius: 10px;
+    margin-bottom: 22px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 700;
+}
+
+.approval-message.success {
+    background: var(--verde-bg);
+    color: var(--verde-texto);
+}
+
+.approval-message.error {
+    background: var(--vermelho-bg);
+    color: var(--vermelho-texto);
+}
+
+.processing-section {
+    background: #ffffff;
+    padding: 22px;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+    margin-bottom: 28px;
+    border: 1px solid #e5e7eb;
+}
+
+.processing-section h2 {
+    color: var(--azul);
+    margin-bottom: 16px;
+    font-size: 24px;
+}
+
+.processing-info {
+    display: flex;
+    gap: 16px;
+    align-items: center;
+    margin-bottom: 16px;
+}
+
+.processing-info > i {
+    font-size: 32px;
+    color: var(--azul-hover);
+}
+
+.processing-info p {
+    margin-top: 4px;
+    font-size: 14px;
+    color: #6b7280;
+}
+
+.btn-process,
+.preview-button,
+.btn-approve,
+.btn-reject,
+.btn-modal-close {
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: 0.2s;
+}
+
+.btn-process {
+    background: #16a085;
+    color: #ffffff;
+    padding: 13px 22px;
+}
+
+.btn-process:hover {
+    background: #138d75;
+}
+
+.processing-status {
+    padding: 16px;
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-left: 4px solid #27ae60;
+    border-radius: 8px;
+    margin-top: 16px;
+    line-height: 1.5;
+}
+
+.documents-table-wrap {
+    overflow-x: auto;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.documents-table {
+    width: 100%;
+    border-collapse: separate;
+    border-spacing: 0;
+    min-width: 940px;
+}
+
+.documents-table thead {
+    background: var(--azul);
+    color: #ffffff;
+}
+
+.documents-table th,
+.documents-table td {
+    padding: 16px;
+    text-align: left;
+    border-bottom: 1px solid #e5e7eb;
+    vertical-align: middle;
+}
+
+.documents-table tbody tr:hover {
+    background: #f8fafc;
+}
+
+.document-type,
+.status-pending {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.document-type.pdf {
+    color: #e74c3c;
+}
+
+.document-type.text {
+    color: #3498db;
+}
+
+.status-pending {
+    background: var(--amarelo-bg);
+    color: var(--amarelo-texto);
+    padding: 7px 13px;
+    border-radius: 999px;
+    font-size: 13px;
+}
+
+.user-info-cell {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.user-info-cell span {
+    font-size: 13px;
+    color: #6b7280;
+}
+
+.preview-button {
+    background: var(--azul);
+    color: #ffffff;
+    padding: 10px 15px;
+}
+
+.preview-button:hover {
+    background: var(--azul-escuro);
+}
+
+.action-buttons {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+}
+
+.btn-approve,
+.btn-reject {
+    padding: 10px 14px;
+    font-size: 14px;
+}
+
+.btn-approve {
+    background: #27ae60;
+    color: #ffffff;
+}
+
+.btn-approve:hover {
+    background: #229954;
+}
+
+.btn-reject {
+    background: #e74c3c;
+    color: #ffffff;
+}
+
+.btn-reject:hover {
+    background: #c0392b;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 48px 24px;
+    background: #ffffff;
+    border-radius: 16px;
+    box-shadow: 0 4px 14px rgba(0, 0, 0, 0.05);
+}
+
+.empty-state i {
+    font-size: 48px;
+    color: #27ae60;
+    margin-bottom: 16px;
+}
+
+.empty-state h2 {
+    color: var(--azul);
+    margin-bottom: 8px;
+}
+
+.preview-modal {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.6);
+    z-index: 1000;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+}
+
+.preview-modal.active {
+    display: flex;
+}
+
+.preview-modal-content {
+    background: #ffffff;
+    border-radius: 16px;
+    max-width: 900px;
+    width: 100%;
+    max-height: 80vh;
+    overflow-y: auto;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.3);
+}
+
+.preview-modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 28px;
+    border-bottom: 1px solid #e5e7eb;
+    background: var(--azul);
+    color: #ffffff;
+    border-radius: 16px 16px 0 0;
+    gap: 16px;
+}
+
+.preview-modal-header h2 {
+    margin: 0;
+    font-size: 22px;
+    word-break: break-word;
+}
+
+.preview-modal-close {
+    background: none;
+    border: none;
+    color: #ffffff;
+    font-size: 28px;
+    cursor: pointer;
+}
+
+.preview-modal-body {
+    padding: 28px;
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    font-family: "Courier New", monospace;
+    font-size: 15px;
+    line-height: 1.6;
+    color: #2c3e50;
+    max-height: calc(80vh - 150px);
+    overflow-y: auto;
+}
+
+.preview-loading,
+.preview-error {
+    text-align: center;
+}
+
+.preview-loading {
+    color: #7f8c8d;
+}
+
+.preview-error {
+    color: #e74c3c;
+}
+
+.preview-modal-footer {
+    padding: 18px 28px;
+    border-top: 1px solid #e5e7eb;
+    background: #f8fafc;
+    display: flex;
+    justify-content: flex-end;
+    border-radius: 0 0 16px 16px;
+}
+
+.btn-modal-close {
+    background: #6b7280;
+    color: #ffffff;
+    padding: 11px 18px;
+}
+
+.btn-modal-close:hover {
+    background: #4b5563;
+}
+
+@media (max-width: 700px) {
+    .approve-panel {
+        padding: 18px;
+    }
+
+    .approve-header h1 {
+        font-size: 28px;
+    }
+
+    .processing-info {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .preview-modal-header,
+    .preview-modal-footer {
+        padding: 16px 18px;
+    }
+
+    .preview-modal-body {
+        padding: 18px;
+    }
+}

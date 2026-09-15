@@ -1,0 +1,147 @@
+.page-header {
+    max-width: 1200px;
+    margin: 0 auto 24px;
+    color: white;
+}
+
+.page-title {
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1.1;
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 8px;
+    word-break: break-word;
+}
+
+.page-title i {
+    font-size: 32px;
+}
+
+.page-subtitle {
+    display: inline-block;
+    background: rgba(255,255,255,0.92);
+    color: #1f2937;
+    padding: 8px 14px;
+    border-radius: 8px;
+    font-size: 14px;
+}
+
+.content-panel {
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255,255,255,0.90);
+    border-radius: 20px;
+    padding: 24px;
+}
+
+.card {
+    background: white;
+    border-radius: 18px;
+    padding: 20px;
+    border: 1px solid #e5e7eb;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.04);
+}
+
+.btn {
+    border: none;
+    cursor: pointer;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    transition: 0.2s;
+    font-weight: 700;
+}
+
+.btn-primary {
+    background: var(--azul);
+    color: white;
+    border-radius: 12px;
+    padding: 11px 14px;
+}
+
+.btn-primary:hover {
+    background: var(--azul-escuro);
+}
+
+.btn-secondary {
+    background: #e5e7eb;
+    color: #111827;
+    border-radius: 12px;
+    padding: 11px 14px;
+}
+
+.btn-secondary:hover {
+    background: #d1d5db;
+}
+
+.badge {
+    display: inline-flex;
+    align-items: center;
+    padding: 7px 12px;
+    border-radius: 999px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.status-processed,
+.status-approved,
+.status-concluido {
+    background: var(--verde-bg);
+    color: var(--verde-texto);
+}
+
+.status-processing,
+.status-processando,
+.status-pendente {
+    background: var(--amarelo-bg);
+    color: var(--amarelo-texto);
+}
+
+.status-error,
+.status-erro {
+    background: var(--vermelho-bg);
+    color: var(--vermelho-texto);
+}
+
+.alert,
+.processing-message,
+.error-message,
+.warning-message {
+    border-radius: 16px;
+    padding: 18px;
+    margin-bottom: 20px;
+    font-size: 15px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    font-weight: 600;
+}
+
+.processing-message,
+.warning-message {
+    background: var(--amarelo-bg);
+    color: var(--amarelo-texto);
+}
+
+.error-message {
+    background: var(--vermelho-bg);
+    color: var(--vermelho-texto);
+}
+
+@media (max-width: 900px) {
+    .page-title {
+        font-size: 28px;
+    }
+
+    .page-title i {
+        font-size: 26px;
+    }
+
+    .content-panel {
+        padding: 18px;
+    }
+}

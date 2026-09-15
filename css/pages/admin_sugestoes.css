@@ -1,0 +1,148 @@
+.suggestions-admin {
+    width: min(1180px, 100%);
+    margin: 0 auto;
+}
+
+.suggestions-panel {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 18px;
+    padding: 24px;
+    color: #111827;
+}
+
+.suggestions-toolbar {
+    display: flex;
+    align-items: end;
+    justify-content: space-between;
+    gap: 18px;
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.suggestions-kpi {
+    min-width: 180px;
+    background: var(--azul);
+    color: #ffffff;
+    padding: 16px;
+    border-radius: 14px;
+    text-align: center;
+}
+
+.suggestions-kpi span {
+    display: block;
+    font-size: 13px;
+    opacity: 0.86;
+    margin-bottom: 6px;
+}
+
+.suggestions-kpi strong {
+    display: block;
+    font-size: 34px;
+    line-height: 1;
+}
+
+.suggestions-search {
+    flex: 1;
+    min-width: 260px;
+}
+
+.suggestions-search label {
+    display: block;
+    font-weight: 700;
+    margin-bottom: 8px;
+}
+
+.suggestions-search input {
+    width: 100%;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 10px;
+    padding: 12px 14px;
+    background: #ffffff;
+    color: #111827;
+}
+
+.suggestions-search input:focus {
+    outline: none;
+    border-color: var(--azul-borda);
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.14);
+}
+
+.suggestions-status {
+    color: #4b5563;
+    font-weight: 700;
+    margin-bottom: 14px;
+}
+
+.suggestions-status:empty {
+    display: none;
+}
+
+.suggestions-table-wrap {
+    overflow-x: auto;
+    border-radius: 14px;
+    border: 1px solid #e5e7eb;
+    background: #ffffff;
+}
+
+.suggestions-table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 720px;
+}
+
+.suggestions-table th,
+.suggestions-table td {
+    padding: 14px;
+    border-bottom: 1px solid #e5e7eb;
+    text-align: left;
+    vertical-align: top;
+}
+
+.suggestions-table th {
+    background: var(--azul);
+    color: #ffffff;
+    font-size: 14px;
+}
+
+.suggestions-table tr:nth-child(even) td {
+    background: #f8fafc;
+}
+
+.suggestions-table tr:last-child td {
+    border-bottom: none;
+}
+
+.suggestion-user {
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.suggestion-text {
+    line-height: 1.5;
+    white-space: pre-wrap;
+}
+
+.suggestion-date {
+    white-space: nowrap;
+    color: #4b5563;
+}
+
+.alert-error {
+    background: var(--vermelho-bg);
+    color: var(--vermelho-texto);
+}
+
+@media (max-width: 700px) {
+    .suggestions-panel {
+        padding: 18px;
+    }
+
+    .suggestions-toolbar {
+        align-items: stretch;
+    }
+
+    .suggestions-kpi,
+    .suggestions-search {
+        width: 100%;
+    }
+}

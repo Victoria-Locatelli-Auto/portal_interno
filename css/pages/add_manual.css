@@ -1,0 +1,116 @@
+.manual-page {
+    width: min(900px, 100%);
+    margin: 0 auto;
+}
+
+.manual-panel {
+    background: rgba(255, 255, 255, 0.92);
+    border-radius: 18px;
+    padding: 24px;
+}
+
+.alert-success {
+    background: var(--verde-bg);
+    color: var(--verde-texto);
+}
+
+.alert-error {
+    background: var(--vermelho-bg);
+    color: var(--vermelho-texto);
+}
+
+.info-box {
+    background: #e8f4f8;
+    border-left: 4px solid var(--azul-borda);
+    padding: 16px;
+    border-radius: 8px;
+    margin-bottom: 24px;
+}
+
+.info-box h2 {
+    color: var(--azul);
+    font-size: 18px;
+    margin-bottom: 8px;
+}
+
+.info-box p {
+    color: #1f2937;
+    line-height: 1.5;
+    font-size: 15px;
+}
+
+.manual-form {
+    background: #ffffff;
+    border-radius: 14px;
+    padding: 24px;
+    border: 1px solid #e5e7eb;
+}
+
+.form-group {
+    margin-bottom: 22px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 700;
+    color: #111827;
+}
+
+.form-group label span {
+    color: #c0392b;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 12px;
+    border: 1px solid var(--cinza-borda);
+    border-radius: 8px;
+    background: #ffffff;
+    color: #111827;
+    font-size: 15px;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--azul-borda);
+    box-shadow: 0 0 0 3px rgba(30, 144, 255, 0.14);
+}
+
+.form-group textarea {
+    min-height: 300px;
+    resize: vertical;
+    font-family: "Courier New", monospace;
+    line-height: 1.5;
+}
+
+.char-count {
+    font-size: 13px;
+    color: #6b7280;
+    margin-top: 8px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 12px;
+    justify-content: flex-end;
+    flex-wrap: wrap;
+}
+
+@media (max-width: 700px) {
+    .manual-panel,
+    .manual-form {
+        padding: 18px;
+    }
+
+    .form-actions {
+        justify-content: stretch;
+    }
+
+    .form-actions .btn {
+        width: 100%;
+    }
+}

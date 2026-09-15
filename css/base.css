@@ -1,0 +1,48 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+:root {
+    --azul: #03285f;
+    --azul-escuro: #021f49;
+    --azul-hover: #0a4c9a;
+    --azul-borda: #1e90ff;
+    --branco: #ffffff;
+    --cinza-texto: #374151;
+    --cinza-claro: #f8fafc;
+    --cinza-borda: #d1d5db;
+    --verde-bg: #d5f4e6;
+    --verde-texto: #1e824c;
+    --amarelo-bg: #fff3cd;
+    --amarelo-texto: #b7791f;
+    --vermelho-bg: #fadbd8;
+    --vermelho-texto: #c0392b;
+    --vermelho-suave: rgba(255, 93, 93, 0.18);
+    --vermelho-hover: rgba(255, 93, 93, 0.30);
+}
+
+html, body {
+    min-height: 100%;
+}
+
+body {
+    font-family: Arial, Helvetica, sans-serif;
+    background:
+        linear-gradient(rgba(3, 40, 95, 0.35), rgba(3, 40, 95, 0.35)),
+        url("../index_files/background.png") center center / cover fixed no-repeat;
+    color: #111827;
+}
+
+a {
+    text-decoration: none;
+    color: inherit;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}

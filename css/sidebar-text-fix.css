@@ -1,0 +1,32 @@
+/* Mantém títulos longos legíveis quando o menu lateral está aberto. */
+.sidebar.open .sidebar-item,
+.sidebar.open .sidebar-subitem,
+.sidebar.open .sidebar-dropdown-toggle {
+    height: auto;
+    white-space: normal;
+    align-items: flex-start;
+}
+
+.sidebar.open .sidebar-item > span,
+.sidebar.open .sidebar-subitem > span,
+.sidebar.open .sidebar-dropdown-toggle > span {
+    display: block;
+    flex: 1 1 auto;
+    min-width: 0;
+    white-space: normal;
+    overflow: visible;
+    overflow-wrap: break-word;
+    word-break: normal;
+    line-height: 1.25;
+}
+
+.sidebar.open .sidebar-item > i,
+.sidebar.open .sidebar-subitem > i,
+.sidebar.open .sidebar-dropdown-toggle > i {
+    flex: 0 0 20px;
+    margin-top: 1px;
+}
+
+.sidebar.open .sidebar-dropdown-toggle > .sidebar-arrow {
+    flex: 0 0 auto;
+}
