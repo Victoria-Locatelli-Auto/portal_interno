@@ -173,8 +173,9 @@ class EmailManager {
             $mail->SMTPAuth = true;
             $mail->Username = $this->config['SMTP_USERNAME'];
             $mail->Password = $this->config['SMTP_PASSWORD'];
-            $mail->SMTPSecure = strtoupper($this->config['SMTP_ENCRYPTION']);
+            $mail->SMTPSecure = strtolower(trim((string)$this->config['SMTP_ENCRYPTION']));
             $mail->Port = $this->config['SMTP_PORT'];
+            $mail->Timeout = (int)($this->config['TIMEOUT'] ?? 15);
             $mail->SMTPOptions = [
                 'ssl' => [
                     'verify_peer' => $this->config['VERIFY_SSL'],
