@@ -20,6 +20,15 @@ function manageNoticesCanAccess(?array $user): bool
     return $user && in_array($user['access_level'] ?? '', ['admin', 'editor', 'RH'], true);
 }
 
+function manageNoticesCsrfToken(): string
+{
+    if (empty($_SESSION['manage_notices_csrf'])) {
+        $_SESSION['manage_notices_csrf'] = bin2hex(random_bytes(32));
+    }
+
+    return (string)$_SESSION['manage_notices_csrf'];
+}
+
 function manageNoticesSidebarItems(mysqli $conn): array
 {
     $result = $conn->query("
@@ -34,6 +43,17 @@ function manageNoticesSidebarItems(mysqli $conn): array
 
 function manageNoticesHandleAction(mysqli $conn, array $post): array
 {
+    $submitted_token = $post['csrf_token'] ?? '';
+    $session_token = $_SESSION['manage_notices_csrf'] ?? '';
+
+    if (!is_string($submitted_token)
+        || !is_string($session_token)
+        || $session_token === ''
+        || !hash_equals($session_token, $submitted_token)
+    ) {
+        return manageNoticesResult('', 'A sessão expirou. Atualize a página e tente novamente.');
+    }
+
     $action = (string)($post['action'] ?? '');
 
     if ($action === 'add_notice') {
@@ -61,21 +81,25 @@ function manageNoticesAdd(mysqli $conn, array $post): array
     $description = trim((string)($post['description'] ?? ''));
     $content = trim((string)($post['content'] ?? ''));
 
-    if ($title === '' || $description === '') {
-        return manageNoticesResult('', 'Título e descrição são obrigatórios.');
+    $validation_error = manageNoticesValidateFields($title, $description, $content);
+
+    if ($validation_error !== '') {
+        return manageNoticesResult('', $validation_error);
     }
 
     $stmt = $conn->prepare('INSERT INTO notices (title, description, content, is_active) VALUES (?, ?, ?, TRUE)');
 
     if (!$stmt) {
-        return manageNoticesResult('', 'Erro ao preparar aviso: ' . $conn->error);
+        return manageNoticesResult('', 'Não foi possível preparar o novo aviso.');
     }
 
     $stmt->bind_param('sss', $title, $description, $content);
 
     if (!$stmt->execute()) {
-        return manageNoticesResult('', 'Erro ao criar aviso: ' . $stmt->error);
+        return manageNoticesResult('', 'Não foi possível criar o aviso. Tente novamente.');
     }
+
+    $stmt->close();
 
     return manageNoticesResult('Aviso adicionado com sucesso.', '');
 }
@@ -87,65 +111,114 @@ function manageNoticesEdit(mysqli $conn, array $post): array
     $description = trim((string)($post['description'] ?? ''));
     $content = trim((string)($post['content'] ?? ''));
 
-    if ($notice_id <= 0 || $title === '' || $description === '') {
-        return manageNoticesResult('', 'Dados inválidos.');
+    if ($notice_id <= 0 || !manageNoticesExists($conn, $notice_id)) {
+        return manageNoticesResult('', 'Aviso não encontrado.');
+    }
+
+    $validation_error = manageNoticesValidateFields($title, $description, $content);
+
+    if ($validation_error !== '') {
+        return manageNoticesResult('', $validation_error);
     }
 
     $stmt = $conn->prepare('UPDATE notices SET title = ?, description = ?, content = ? WHERE id = ?');
 
     if (!$stmt) {
-        return manageNoticesResult('', 'Erro ao preparar atualização: ' . $conn->error);
+        return manageNoticesResult('', 'Não foi possível preparar a atualização.');
     }
 
     $stmt->bind_param('sssi', $title, $description, $content, $notice_id);
 
     if (!$stmt->execute()) {
-        return manageNoticesResult('', 'Erro ao atualizar aviso: ' . $stmt->error);
+        return manageNoticesResult('', 'Não foi possível atualizar o aviso. Tente novamente.');
     }
+
+    $stmt->close();
 
     return manageNoticesResult('Aviso atualizado com sucesso.', '');
 }
 
 function manageNoticesDelete(mysqli $conn, int $notice_id): array
 {
-    if ($notice_id <= 0) {
-        return manageNoticesResult('', 'Aviso inválido.');
+    if ($notice_id <= 0 || !manageNoticesExists($conn, $notice_id)) {
+        return manageNoticesResult('', 'Aviso não encontrado.');
     }
 
     $stmt = $conn->prepare('DELETE FROM notices WHERE id = ?');
 
     if (!$stmt) {
-        return manageNoticesResult('', 'Erro ao preparar exclusão: ' . $conn->error);
+        return manageNoticesResult('', 'Não foi possível preparar a exclusão.');
     }
 
     $stmt->bind_param('i', $notice_id);
 
     if (!$stmt->execute()) {
-        return manageNoticesResult('', 'Erro ao remover aviso: ' . $stmt->error);
+        return manageNoticesResult('', 'Não foi possível remover o aviso. Tente novamente.');
     }
+
+    $stmt->close();
 
     return manageNoticesResult('Aviso removido com sucesso.', '');
 }
 
 function manageNoticesToggle(mysqli $conn, int $notice_id): array
 {
-    if ($notice_id <= 0) {
-        return manageNoticesResult('', 'Aviso inválido.');
+    if ($notice_id <= 0 || !manageNoticesExists($conn, $notice_id)) {
+        return manageNoticesResult('', 'Aviso não encontrado.');
     }
 
     $stmt = $conn->prepare('UPDATE notices SET is_active = NOT is_active WHERE id = ?');
 
     if (!$stmt) {
-        return manageNoticesResult('', 'Erro ao preparar alteração: ' . $conn->error);
+        return manageNoticesResult('', 'Não foi possível preparar a alteração.');
     }
 
     $stmt->bind_param('i', $notice_id);
 
     if (!$stmt->execute()) {
-        return manageNoticesResult('', 'Erro ao alterar status do aviso: ' . $stmt->error);
+        return manageNoticesResult('', 'Não foi possível alterar o status do aviso.');
     }
 
+    $stmt->close();
+
     return manageNoticesResult('Status do aviso alterado.', '');
+}
+
+function manageNoticesValidateFields(string $title, string $description, string $content): string
+{
+    if ($title === '' || $description === '') {
+        return 'Título e descrição são obrigatórios.';
+    }
+
+    if (mb_strlen($title, 'UTF-8') > 255) {
+        return 'O título deve ter no máximo 255 caracteres.';
+    }
+
+    if (mb_strlen($description, 'UTF-8') > 1000) {
+        return 'A descrição deve ter no máximo 1.000 caracteres.';
+    }
+
+    if (mb_strlen($content, 'UTF-8') > 20000) {
+        return 'O conteúdo completo deve ter no máximo 20.000 caracteres.';
+    }
+
+    return '';
+}
+
+function manageNoticesExists(mysqli $conn, int $notice_id): bool
+{
+    $stmt = $conn->prepare('SELECT id FROM notices WHERE id = ? LIMIT 1');
+
+    if (!$stmt) {
+        return false;
+    }
+
+    $stmt->bind_param('i', $notice_id);
+    $stmt->execute();
+    $exists = (bool)$stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    return $exists;
 }
 
 function manageNoticesList(mysqli $conn): array
@@ -157,6 +230,23 @@ function manageNoticesList(mysqli $conn): array
     ");
 
     return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+}
+
+function manageNoticesStats(array $notices): array
+{
+    $active = 0;
+
+    foreach ($notices as $notice) {
+        if (!empty($notice['is_active'])) {
+            $active++;
+        }
+    }
+
+    return [
+        'total' => count($notices),
+        'active' => $active,
+        'inactive' => count($notices) - $active,
+    ];
 }
 
 function manageNoticesExcerpt(?string $text, int $limit): string

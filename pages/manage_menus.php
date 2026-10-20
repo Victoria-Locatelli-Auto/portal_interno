@@ -27,11 +27,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = manageMenusHandleAction($conn, $_POST);
     $success_msg = $result['success'];
     $error_msg = $result['error'];
+    unset($_SESSION['manage_menus_csrf']);
 }
 
 $custom_menus = manageMenusSidebarItems($conn);
 $menus_list = manageMenusList($conn);
+$menu_stats = manageMenusStats($menus_list);
 $icons = getIconList();
+$manage_menus_csrf = manageMenusCsrfToken();
 $page_title = 'Gerenciar Menus';
 $page_css = 'css/pages/manage_menus.css';
 $page_js = 'js/pages/manage_menus.js';

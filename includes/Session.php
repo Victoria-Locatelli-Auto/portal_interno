@@ -83,5 +83,21 @@ class Session {
     public static function getIdFilial() {
         return self::get('id_filial');
     }
+
+    public static function hasCompleteProfile(): bool {
+        $required_text = [
+            self::get('first_name'),
+            self::get('last_name'),
+            self::get('email'),
+        ];
+
+        foreach ($required_text as $value) {
+            if (trim((string)$value) === '') {
+                return false;
+            }
+        }
+
+        return (int)self::getIdFuncao() > 0 && (int)self::getIdFilial() > 0;
+    }
 }
 ?>

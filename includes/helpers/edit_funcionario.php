@@ -1,5 +1,17 @@
 <?php
 
+function editFuncionarioSidebarItems(mysqli $conn): array
+{
+    $result = $conn->query("
+        SELECT id, title, url, icon, menu_type
+        FROM custom_menus
+        WHERE is_active = TRUE
+        ORDER BY order_position ASC
+    ");
+
+    return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+}
+
 function editFuncionarioFormatName($text) {
     $text = trim($text);
     $text = mb_strtolower($text, 'UTF-8');
@@ -37,11 +49,67 @@ function editFuncionarioFormatFilial($text) {
         return '—';
     }
 
-    return mb_strtoupper($text, 'UTF-8');
+    return editFuncionarioFormatCargo($text);
 }
 
 function editFuncionarioNormalizeFilialCodigo($text) {
     return mb_strtoupper(trim((string)$text), 'UTF-8');
+}
+
+function editFuncionarioFormatWhatsApp(?string $phone): string
+{
+    $original = trim((string)$phone);
+
+    if ($original === '') {
+        return '';
+    }
+
+    $digits = preg_replace('/\D+/', '', $original);
+
+    if ((strlen($digits) === 12 || strlen($digits) === 13) && str_starts_with($digits, '55')) {
+        $digits = substr($digits, 2);
+    }
+
+    if (strlen($digits) === 11) {
+        return sprintf(
+            '(%s) %s %s-%s',
+            substr($digits, 0, 2),
+            substr($digits, 2, 1),
+            substr($digits, 3, 4),
+            substr($digits, 7, 4)
+        );
+    }
+
+    if (strlen($digits) === 10) {
+        return sprintf(
+            '(%s) %s-%s',
+            substr($digits, 0, 2),
+            substr($digits, 2, 4),
+            substr($digits, 6, 4)
+        );
+    }
+
+    return $original;
+}
+
+function editFuncionarioPhotoUrl(string $base_url, ?string $path): ?string
+{
+    $path = str_replace('\\', '/', trim((string)$path));
+
+    if (!preg_match('#^uploads/profile/[a-zA-Z0-9._-]+$#', $path)) {
+        return null;
+    }
+
+    return rtrim($base_url, '/') . '/' . $path;
+}
+
+function editFuncionarioCsrfToken(): string
+{
+    if (empty($_SESSION['edit_funcionario_csrf'])) {
+        $_SESSION['edit_funcionario_csrf'] = bin2hex(random_bytes(32));
+    }
+
+    return (string)$_SESSION['edit_funcionario_csrf'];
 }
 
 function editFuncionarioLoggedUser(mysqli $conn, int $user_id): ?array
@@ -111,6 +179,7 @@ function editFuncionarioFindUser(mysqli $conn, int $user_id): ?array
             u.is_active,
             u.email_verified,
             u.created_at,
+            u.profile_photo,
             f.descricao AS job_title,
             fi.codigo_filial,
             fi.nome_filial,
@@ -140,12 +209,29 @@ function editFuncionarioAccessLevels(): array
     return ['admin', 'editor', 'viewer', 'Gestor', 'Analista', 'Coordenador', 'Marketing', 'RH'];
 }
 
-function editFuncionarioHandleSubmit(mysqli $conn, array $post, array $logged_user, int $logged_user_id): array
+function editFuncionarioHandleSubmit(
+    mysqli $conn,
+    array $post,
+    array $logged_user,
+    int $logged_user_id,
+    int $target_user_id
+): array
 {
     $post_user_id = (int)($post['user_id'] ?? 0);
     $is_admin = editFuncionarioIsAdmin($logged_user);
 
-    if ($post_user_id <= 0) {
+    $submitted_token = $post['csrf_token'] ?? '';
+    $session_token = $_SESSION['edit_funcionario_csrf'] ?? '';
+
+    if (!is_string($submitted_token)
+        || !is_string($session_token)
+        || $session_token === ''
+        || !hash_equals($session_token, $submitted_token)
+    ) {
+        return ['success' => '', 'error' => 'A sessão expirou. Atualize a página e tente novamente.'];
+    }
+
+    if ($post_user_id <= 0 || $post_user_id !== $target_user_id) {
         return ['success' => '', 'error' => 'Funcionário inválido.'];
     }
 
@@ -154,7 +240,7 @@ function editFuncionarioHandleSubmit(mysqli $conn, array $post, array $logged_us
     }
 
     $form_data = editFuncionarioFormData($post);
-    $error = editFuncionarioValidate($conn, $form_data, $is_admin);
+    $error = editFuncionarioValidate($conn, $form_data, $is_admin, $target_user_id);
 
     if ($error !== '') {
         return ['success' => '', 'error' => $error];
@@ -171,7 +257,7 @@ function editFuncionarioFormData(array $post): array
         'first_name' => trim((string)($post['first_name'] ?? '')),
         'last_name' => trim((string)($post['last_name'] ?? '')),
         'email' => trim((string)($post['email'] ?? '')),
-        'wpp_corporativo' => trim((string)($post['wpp_corporativo'] ?? '')),
+        'wpp_corporativo' => editFuncionarioFormatWhatsApp($post['wpp_corporativo'] ?? null),
         'id_funcao' => (int)($post['id_funcao'] ?? 0),
         'id_filial' => (int)($post['id_filial'] ?? 0),
         'access_level' => trim((string)($post['access_level'] ?? '')),
@@ -180,7 +266,7 @@ function editFuncionarioFormData(array $post): array
     ];
 }
 
-function editFuncionarioValidate(mysqli $conn, array $data, bool $is_admin): string
+function editFuncionarioValidate(mysqli $conn, array $data, bool $is_admin, int $user_id): string
 {
     if ($data['first_name'] === '' || $data['last_name'] === '') {
         return 'Nome e sobrenome são obrigatórios.';
@@ -194,8 +280,11 @@ function editFuncionarioValidate(mysqli $conn, array $data, bool $is_admin): str
         return 'Informe um e-mail válido.';
     }
 
-    if ($data['wpp_corporativo'] === '') {
-        return 'WhatsApp corporativo é obrigatório.';
+    if ($data['wpp_corporativo'] !== '') {
+        $phone_digits = preg_replace('/\D+/', '', $data['wpp_corporativo']);
+        if (!in_array(strlen($phone_digits), [10, 11], true)) {
+            return 'Informe um WhatsApp com DDD válido.';
+        }
     }
 
     if ($data['id_filial'] <= 0) {
@@ -214,11 +303,31 @@ function editFuncionarioValidate(mysqli $conn, array $data, bool $is_admin): str
         return 'Selecione uma função válida.';
     }
 
-    if ($is_admin && $data['access_level'] === '') {
-        return 'Selecione o nível de acesso.';
+    if ($is_admin && !in_array($data['access_level'], editFuncionarioAccessLevels(), true)) {
+        return 'Selecione um nível de acesso válido.';
+    }
+
+    if ($is_admin && editFuncionarioEmailInUse($conn, $data['email'], $user_id)) {
+        return 'Este e-mail já está vinculado a outro colaborador.';
     }
 
     return '';
+}
+
+function editFuncionarioEmailInUse(mysqli $conn, string $email, int $user_id): bool
+{
+    $stmt = $conn->prepare('SELECT id FROM users WHERE email = ? AND id <> ? LIMIT 1');
+
+    if (!$stmt) {
+        return true;
+    }
+
+    $stmt->bind_param('si', $email, $user_id);
+    $stmt->execute();
+    $exists = (bool)$stmt->get_result()->fetch_assoc();
+    $stmt->close();
+
+    return $exists;
 }
 
 function editFuncionarioExists(mysqli $conn, string $table, int $id, string $extra_condition = ''): bool

@@ -37,25 +37,24 @@ if ($menus_result) {
     $custom_menus = $menus_result->fetch_all(MYSQLI_ASSOC);
 }
 
-$message = Session::get('process_message', '');
-$message_type = $message !== '' ? 'success' : '';
-
-if ($message !== '') {
-    Session::remove('process_message');
-}
+$feedback = Session::get('approve_documents_feedback', ['message' => '', 'type' => '']);
+Session::remove('approve_documents_feedback');
+$message = (string)($feedback['message'] ?? '');
+$message_type = (string)($feedback['type'] ?? '');
 
 $document_model = new Document($conn);
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $action_result = approveDocumentsHandleAction($document_model, $_POST, $user_level);
-
-    if ($action_result['message'] !== '') {
-        $message = $action_result['message'];
-        $message_type = $action_result['type'];
-    }
+    Session::set('approve_documents_feedback', $action_result);
+    unset($_SESSION['approve_documents_csrf']);
+    header('Location: approve_documents.php');
+    exit;
 }
 
 $pending_documents = $document_model->listPending();
+$document_stats = approveDocumentsStats($pending_documents);
+$approve_documents_csrf = approveDocumentsCsrfToken();
 
 require_once __DIR__ . '/../includes/layout_start.php';
 require_once __DIR__ . '/../includes/views/approve-documents-view.php';

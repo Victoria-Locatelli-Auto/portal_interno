@@ -20,6 +20,37 @@
         </form>
     </div>
 
+    <?php if (empty($search_query) && !empty($banners)): ?>
+        <section class="home-banner-carousel" data-banner-carousel aria-label="Destaques do Portal MCM">
+            <div class="home-banner-viewport">
+                <?php foreach ($banners as $banner_index => $banner): ?>
+                    <?php $banner_image = indexBannerImageUrl($base_url, $banner['image_path'] ?? null); ?>
+                    <?php if ($banner_image): ?>
+                        <article class="home-banner-slide <?php echo $banner_index === 0 ? 'is-active' : ''; ?>" data-banner-slide aria-hidden="<?php echo $banner_index === 0 ? 'false' : 'true'; ?>">
+                            <?php if (!empty($banner['target_url'])): ?>
+                                <a href="<?php echo htmlspecialchars($banner['target_url'], ENT_QUOTES, 'UTF-8'); ?>" class="home-banner-link" <?php echo indexBannerIsExternal($banner['target_url']) ? 'target="_blank" rel="noopener noreferrer"' : ''; ?>>
+                            <?php else: ?>
+                                <div class="home-banner-link">
+                            <?php endif; ?>
+                                <img src="<?php echo htmlspecialchars($banner_image, ENT_QUOTES, 'UTF-8'); ?>" alt="<?php echo htmlspecialchars($banner['alt_text'], ENT_QUOTES, 'UTF-8'); ?>" <?php echo $banner_index === 0 ? 'fetchpriority="high"' : 'loading="lazy"'; ?>>
+                                <?php if (!empty($banner['title'])): ?><span class="home-banner-caption"><?php echo htmlspecialchars($banner['title'], ENT_QUOTES, 'UTF-8'); ?></span><?php endif; ?>
+                            <?php if (!empty($banner['target_url'])): ?>
+                                </a>
+                            <?php else: ?>
+                                </div>
+                            <?php endif; ?>
+                        </article>
+                    <?php endif; ?>
+                <?php endforeach; ?>
+            </div>
+            <?php if (count($banners) > 1): ?>
+                <button type="button" class="home-banner-control is-previous" data-banner-previous aria-label="Banner anterior"><i class="fas fa-chevron-left"></i></button>
+                <button type="button" class="home-banner-control is-next" data-banner-next aria-label="Próximo banner"><i class="fas fa-chevron-right"></i></button>
+                <div class="home-banner-dots" role="tablist" aria-label="Selecionar banner"><?php foreach ($banners as $banner_index => $banner): ?><button type="button" class="home-banner-dot <?php echo $banner_index === 0 ? 'is-active' : ''; ?>" data-banner-dot="<?php echo (int)$banner_index; ?>" aria-label="Exibir banner <?php echo (int)$banner_index + 1; ?>" aria-selected="<?php echo $banner_index === 0 ? 'true' : 'false'; ?>"></button><?php endforeach; ?></div>
+            <?php endif; ?>
+        </section>
+    <?php endif; ?>
+
     <?php if (empty($search_query)): ?>
         <section class="quick-section">
             <div class="section-heading">

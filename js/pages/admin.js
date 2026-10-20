@@ -1,29 +1,25 @@
-document.addEventListener('DOMContentLoaded', function () {
-    const resetButtons = document.querySelectorAll('[data-confirm-reset="true"]');
-
-    resetButtons.forEach((button) => {
-        button.addEventListener('click', function (event) {
-            const userName = this.getAttribute('data-user-name') || 'este usuário';
-
-            const confirmed = confirm(
-                `Deseja realmente resetar a senha de ${userName} para Mcm@2026?`
-            );
-
-            if (!confirmed) {
-                event.preventDefault();
-            }
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('[data-confirm]').forEach((button) => {
+        button.addEventListener('click', (event) => {
+            if (!window.confirm(button.dataset.confirm || 'Confirmar esta ação?')) event.preventDefault();
         });
     });
 
-    const closeModalButton = document.querySelector('[data-close-reset-modal]');
-
-    if (closeModalButton) {
-        closeModalButton.addEventListener('click', function () {
-            const modal = document.getElementById('resetPasswordModal');
-
-            if (modal) {
-                modal.style.display = 'none';
-            }
+    document.querySelectorAll('.admin-action-menu').forEach((menu) => {
+        menu.addEventListener('toggle', () => {
+            if (!menu.open) return;
+            document.querySelectorAll('.admin-action-menu[open]').forEach((other) => {
+                if (other !== menu) other.removeAttribute('open');
+            });
         });
-    }
+    });
+
+    document.addEventListener('click', (event) => {
+        if (event.target.closest('.admin-action-menu')) return;
+        document.querySelectorAll('.admin-action-menu[open]').forEach((menu) => menu.removeAttribute('open'));
+    });
+
+    document.addEventListener('keydown', (event) => {
+        if (event.key === 'Escape') document.querySelectorAll('.admin-action-menu[open]').forEach((menu) => menu.removeAttribute('open'));
+    });
 });

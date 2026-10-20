@@ -9,6 +9,25 @@ function indexMenuHref(array $menu, string $base_url): string
     return $menu['url'] ?? '#';
 }
 
+function indexActiveBanners(mysqli $conn): array
+{
+    $result = $conn->query("SELECT id, title, alt_text, image_path, target_url FROM home_banners WHERE is_active = TRUE AND (starts_at IS NULL OR starts_at <= NOW()) AND (ends_at IS NULL OR ends_at >= NOW()) ORDER BY order_position ASC, created_at DESC");
+    return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+}
+
+function indexBannerImageUrl(string $base_url, ?string $path): ?string
+{
+    $path = str_replace('\\', '/', trim((string)$path));
+    if (!preg_match('#^uploads/banners/[a-zA-Z0-9._-]+$#', $path)) return null;
+    return rtrim($base_url, '/') . '/' . $path;
+}
+
+function indexBannerIsExternal(?string $url): bool
+{
+    $host = parse_url((string)$url, PHP_URL_HOST);
+    return is_string($host) && $host !== '';
+}
+
 function indexMenuTarget(array $menu): string
 {
     return ($menu['menu_type'] ?? '') === 'page'

@@ -1,0 +1,71 @@
+.main-area{background:#f4f7fb}.page-content{padding:42px 50px 48px}.banner-manager-page{width:min(1180px,100%);margin:0 auto;color:#071c3f}.banner-page-header,.banner-heading,.banner-panel-heading,.banner-form-actions,.banner-item,.banner-item-title,.banner-meta,.banner-item-actions{display:flex;align-items:center}.banner-page-header{justify-content:space-between;gap:20px;margin-bottom:26px}.banner-heading{gap:20px}.banner-heading-icon{width:68px;height:68px;display:grid;place-items:center;flex:0 0 68px;border:1px solid #cfdbed;border-radius:8px;background:#e9f0fb;color:#0a2f70;font-size:27px}.banner-kicker{display:block;margin-bottom:6px;color:#61718d;font-size:12px;font-weight:800;letter-spacing:1.4px;text-transform:uppercase}.banner-heading h1{margin:0;color:#03285f;font-family:"Trebuchet MS","Segoe UI",sans-serif;font-size:clamp(32px,4vw,44px);line-height:1.05}.banner-home-link,.banner-button{display:inline-flex;align-items:center;justify-content:center;gap:8px;min-height:42px;padding:10px 16px;border:1px solid #ccd7e6;border-radius:7px;font-weight:800;text-decoration:none}.banner-home-link{background:#fff;color:#17467f}.banner-alert{display:flex;align-items:center;gap:10px;margin-bottom:18px;padding:13px 16px;border:1px solid;border-radius:8px;font-weight:700}.banner-alert.is-success{border-color:#bce8d0;background:#eaf8f0;color:#17623a}.banner-alert.is-error{border-color:#efc4c4;background:#fff0f0;color:#9b2424}.banner-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px}.banner-stat{min-height:82px;padding:16px 18px;border:1px solid #dfe6f0;border-radius:8px;background:#fff;box-shadow:0 8px 24px rgba(17,45,89,.05)}.banner-stat strong{display:block;color:#03285f;font-size:25px;line-height:1}.banner-stat span{display:block;margin-top:8px;color:#64748b;font-size:13px;font-weight:700}.banner-panel{margin-bottom:22px;padding:25px;border:1px solid #dfe6f0;border-radius:8px;background:#fff;box-shadow:0 12px 34px rgba(17,45,89,.06)}.banner-panel-heading{justify-content:space-between;margin-bottom:20px}.banner-panel-heading h2{margin:0;color:#03285f;font-family:"Trebuchet MS","Segoe UI",sans-serif;font-size:23px}.banner-panel-heading p{margin:5px 0 0;color:#64748b;font-size:13px}.banner-upload-grid{display:grid;grid-template-columns:minmax(300px,.85fr) minmax(0,1.15fr);gap:22px}.banner-dropzone{position:relative;aspect-ratio:4/1.5;min-height:210px;display:grid;place-items:center;overflow:hidden;border:1px dashed #9fb2cc;border-radius:8px;background:#f5f8fc;cursor:pointer}.banner-dropzone:hover{border-color:#1d589e;background:#edf4fc}.banner-dropzone input{position:absolute;width:1px;height:1px;opacity:0}.banner-upload-placeholder{display:grid;justify-items:center;gap:7px;color:#62738c;text-align:center}.banner-upload-placeholder i{color:#174f93;font-size:30px}.banner-upload-placeholder strong{color:#173c6b}.banner-upload-placeholder small{font-size:12px}.banner-dropzone img{width:100%;height:100%;object-fit:cover}.banner-fields{display:grid;gap:14px}.banner-field label{display:block;margin-bottom:7px;color:#102a56;font-size:12px;font-weight:800}.banner-field label span{color:#b42323}.banner-field input{width:100%;min-height:44px;padding:9px 12px;border:1px solid #cdd8e8;border-radius:7px;background:#fff;color:#10213d;font:inherit}.banner-field input:focus{outline:none;border-color:#1f5fae;box-shadow:0 0 0 3px rgba(31,95,174,.13)}.banner-field small{display:block;margin-top:5px;color:#7b8799;font-size:11px}.banner-schedule-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:16px;margin-top:18px}.banner-toggle{display:flex;align-items:center;gap:11px;min-height:44px;margin-top:19px;cursor:pointer}.banner-toggle>input{position:absolute;opacity:0}.banner-toggle>span{position:relative;width:42px;height:23px;flex:0 0 42px;border-radius:999px;background:#aab5c4;transition:.2s}.banner-toggle>span::after{content:"";position:absolute;top:3px;left:3px;width:17px;height:17px;border-radius:50%;background:#fff;transition:.2s}.banner-toggle>input:checked+span{background:#17623a}.banner-toggle>input:checked+span::after{transform:translateX(19px)}.banner-toggle strong,.banner-toggle small{display:block}.banner-toggle strong{color:#17355e;font-size:12px}.banner-toggle small{margin-top:2px;color:#78869a;font-size:10px}.banner-form-actions{justify-content:flex-end;margin-top:20px}.banner-button{border:0;font:inherit;cursor:pointer}.banner-button.is-primary{color:#fff;background-color:#03285f;background-image:linear-gradient(rgba(3,40,95,.9),rgba(3,40,95,.9)),url("../../index_files/login-trucks.jpg");background-position:center;background-size:cover}.banner-list{display:grid;gap:12px}.banner-item{gap:16px;padding:12px;border:1px solid #dfe6f0;border-radius:8px;background:#fbfcfe}.banner-item-image{width:190px;aspect-ratio:4/1.35;display:grid;place-items:center;flex:0 0 190px;overflow:hidden;border-radius:7px;background:#e9eff7;color:#64748b}.banner-item-image img{width:100%;height:100%;object-fit:cover}.banner-item-content{min-width:0;flex:1}.banner-item-title{gap:10px;flex-wrap:wrap}.banner-item-title>strong{color:#0b254d;font-size:15px}.banner-status{padding:5px 8px;border-radius:999px;font-size:10px;font-weight:800}.banner-status.is-visible{background:#e3f7ec;color:#17623a}.banner-status.is-scheduled{background:#e8f1fc;color:#245386}.banner-status.is-expired{background:#fff1dd;color:#875500}.banner-status.is-inactive{background:#f0f2f5;color:#6b7280}.banner-meta{gap:15px;flex-wrap:wrap;margin-top:9px;color:#6c7c92;font-size:11px}.banner-meta a{color:#1d5798;text-decoration:none}.banner-item-actions{gap:6px}.banner-item-actions form{margin:0}.banner-icon-button{width:36px;height:36px;display:grid;place-items:center;border:1px solid #d4deeb;border-radius:7px;background:#fff;color:#17457f;cursor:pointer}.banner-icon-button:hover{background:#edf3fb}.banner-icon-button.is-danger{color:#b42323}.banner-empty{display:grid;justify-items:center;gap:8px;padding:44px;border:1px dashed #cad5e5;border-radius:8px;color:#6f7e93;text-align:center}.banner-empty>i{color:#1b4f8f;font-size:28px}@media(max-width:850px){.page-content{padding:28px 18px 40px}.banner-upload-grid{grid-template-columns:1fr}.banner-schedule-grid{grid-template-columns:1fr 1fr}.banner-toggle{margin-top:0}.banner-item{align-items:flex-start}.banner-item-image{width:150px;flex-basis:150px}}@media(max-width:580px){.banner-page-header{align-items:flex-start;flex-direction:column}.banner-home-link{width:100%}.banner-stats{grid-template-columns:repeat(2,1fr)}.banner-panel{padding:20px 15px}.banner-schedule-grid{grid-template-columns:1fr}.banner-item{flex-wrap:wrap}.banner-item-image{width:100%;flex-basis:100%;aspect-ratio:4/1.4}.banner-item-actions{margin-left:auto}}
+/* Ajustes de respiro e contenção do formulário de cadastro. */
+.banner-panel {
+    padding: 30px 26px;
+}
+
+.banner-upload-grid {
+    grid-template-columns: minmax(0, 0.9fr) minmax(0, 1.1fr);
+    gap: 32px;
+    align-items: stretch;
+}
+
+.banner-image-field,
+.banner-fields {
+    min-width: 0;
+}
+
+.banner-dropzone {
+    width: 100%;
+    height: 100%;
+    min-height: 230px;
+    aspect-ratio: auto;
+}
+
+.banner-dropzone img {
+    display: block;
+    min-width: 0;
+    max-width: 100%;
+}
+
+.banner-dropzone img[hidden] {
+    display: none;
+}
+
+.banner-fields {
+    align-content: start;
+    gap: 18px;
+}
+
+.banner-schedule-grid {
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) minmax(210px, 0.9fr);
+    gap: 20px;
+    margin-top: 28px;
+    padding-top: 24px;
+    border-top: 1px solid #e5ebf3;
+}
+
+.banner-form-actions {
+    margin-top: 26px;
+}
+
+@media (max-width: 850px) {
+    .banner-panel {
+        padding: 24px 20px;
+    }
+
+    .banner-upload-grid,
+    .banner-schedule-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .banner-dropzone {
+        min-height: 210px;
+    }
+}
+
+@media (max-width: 580px) {
+    .banner-panel {
+        padding: 20px 15px;
+    }
+}

@@ -1,170 +1,69 @@
-<div
-    class="approve-page"
-    data-preview-url="<?php echo htmlspecialchars($base_url); ?>/api/preview_document.php"
->
-    <section class="approve-panel">
-        <header class="approve-header">
-            <div>
-                <h1><i class="fas fa-file-circle-check"></i> Aprovar Documentos</h1>
-                <p>Gerenciar documentos pendentes de aprovação</p>
-            </div>
+<main class="approve-page" data-preview-url="<?php echo htmlspecialchars($base_url, ENT_QUOTES, 'UTF-8'); ?>/api/preview_document.php">
+    <header class="approve-page-header">
+        <div class="approve-heading">
+            <span class="approve-heading-icon" aria-hidden="true"><i class="fas fa-file-circle-check"></i></span>
+            <div><span class="approve-kicker">Biblioteca do Portal MCM</span><h1>Aprovar documentos</h1></div>
+        </div>
+        <?php if ($document_stats['total'] > 0): ?><span class="approve-pending-count"><i class="far fa-clock"></i><?php echo (int)$document_stats['total']; ?> pendentes</span><?php endif; ?>
+    </header>
 
-            <?php if (!empty($pending_documents)): ?>
-                <span class="pending-count">
-                    <i class="fas fa-hourglass-half"></i>
-                    <?php echo count($pending_documents); ?> pendente(s)
-                </span>
-            <?php endif; ?>
-        </header>
+    <?php if ($message !== ''): ?>
+        <div class="approve-alert is-<?php echo $message_type === 'success' ? 'success' : 'error'; ?>" role="<?php echo $message_type === 'success' ? 'status' : 'alert'; ?>">
+            <i class="fas fa-<?php echo $message_type === 'success' ? 'check-circle' : 'exclamation-circle'; ?>"></i>
+            <span><?php echo htmlspecialchars($message, ENT_QUOTES, 'UTF-8'); ?></span>
+        </div>
+    <?php endif; ?>
 
-        <?php if (!empty($message)): ?>
-            <div class="approval-message <?php echo htmlspecialchars($message_type); ?>">
-                <i class="fas fa-<?php echo $message_type === 'success' ? 'check-circle' : 'exclamation-circle'; ?>"></i>
-                <?php echo htmlspecialchars($message); ?>
-            </div>
-        <?php endif; ?>
+    <section class="approve-stats" aria-label="Resumo dos documentos pendentes">
+        <div class="approve-stat"><strong><?php echo (int)$document_stats['total']; ?></strong><span>Total pendente</span></div>
+        <div class="approve-stat"><strong><?php echo (int)$document_stats['pdf']; ?></strong><span>Arquivos PDF</span></div>
+        <div class="approve-stat"><strong><?php echo (int)$document_stats['text']; ?></strong><span>Documentos de texto</span></div>
+    </section>
 
-        <section class="processing-section">
-            <h2><i class="fas fa-cogs"></i> Processamento Automático</h2>
-
-            <div class="processing-info">
-                <i class="fas fa-spinner"></i>
-                <div>
-                    <strong>Apenas documentos PDF passam por processamento automático</strong>
-                    <p>Documentos de texto são aprovados diretamente. PDFs aprovados extraem texto automaticamente.</p>
-                </div>
-            </div>
-
-            <form method="POST" action="<?php echo htmlspecialchars($base_url); ?>/process_now.php">
-                <button type="submit" class="btn-process">
-                    <i class="fas fa-play"></i>
-                    Processar PDFs Agora
-                </button>
+    <?php if (approveDocumentsCanManage($user_level)): ?>
+        <section class="approve-processing-panel">
+            <div class="processing-copy"><span class="processing-icon"><i class="fas fa-gears"></i></span><div><h2>Processamento de PDFs</h2><p>Depois da aprovação, os arquivos PDF aguardam a extração automática do texto. Documentos de texto não precisam desta etapa.</p></div></div>
+            <form method="POST" action="<?php echo htmlspecialchars($base_url, ENT_QUOTES, 'UTF-8'); ?>/process_now.php" data-confirm="Iniciar agora o processamento dos PDFs aprovados?">
+                <input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($approve_documents_csrf, ENT_QUOTES, 'UTF-8'); ?>">
+                <button type="submit" class="approve-button is-primary"><i class="fas fa-play"></i> Processar PDFs agora</button>
             </form>
-
-            <div class="processing-status">
-                <strong>Status:</strong> PDFs aprovados ficarão em "Processando" até a extração de texto ser finalizada. Textos são aprovados diretamente.
-            </div>
         </section>
+    <?php else: ?>
+        <div class="approve-alert is-info"><i class="fas fa-eye"></i><span>Seu perfil possui acesso para consulta. Aprovações, rejeições e processamento são realizados por administradores.</span></div>
+    <?php endif; ?>
+
+    <section class="approve-panel">
+        <div class="approve-panel-heading"><div><h2>Fila de aprovação</h2><p>Documentos enviados e ainda não analisados.</p></div></div>
 
         <?php if (!empty($pending_documents)): ?>
-            <div class="documents-table-wrap">
-                <table class="documents-table">
-                    <thead>
-                        <tr>
-                            <th>Tipo</th>
-                            <th>Documento</th>
-                            <th>Usuário</th>
-                            <th>Status</th>
-                            <th>Pré-visualização</th>
-                            <th>Data de Envio</th>
-                            <?php if (approveDocumentsCanManage($user_level)): ?>
-                                <th>Ações</th>
-                            <?php endif; ?>
-                        </tr>
-                    </thead>
+            <div class="approve-table-wrap">
+                <table class="approve-table">
+                    <thead><tr><th>Documento</th><th>Enviado por</th><th>Data de envio</th><th>Status</th><th class="preview-column">Prévia</th><?php if (approveDocumentsCanManage($user_level)): ?><th class="actions-column">Ações</th><?php endif; ?></tr></thead>
                     <tbody>
-                        <?php foreach ($pending_documents as $document): ?>
-                            <?php
-                                $document_title = approveDocumentsFormatTitle((string)($document['original_name'] ?? ''));
-                                $is_pdf = approveDocumentsIsPdf($document);
-                            ?>
-                            <tr>
-                                <td>
-                                    <span class="document-type <?php echo $is_pdf ? 'pdf' : 'text'; ?>">
-                                        <i class="fas fa-<?php echo $is_pdf ? 'file-pdf' : 'file-lines'; ?>"></i>
-                                        <?php echo $is_pdf ? 'PDF' : 'Texto'; ?>
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <strong><?php echo htmlspecialchars($document_title); ?></strong>
-                                </td>
-
-                                <td>
-                                    <div class="user-info-cell">
-                                        <strong><?php echo htmlspecialchars($document['username'] ?? '-'); ?></strong>
-                                        <span><?php echo htmlspecialchars($document['email'] ?? '-'); ?></span>
-                                    </div>
-                                </td>
-
-                                <td>
-                                    <span class="status-pending">
-                                        <i class="fas fa-hourglass-half"></i>
-                                        Pendente
-                                    </span>
-                                </td>
-
-                                <td>
-                                    <button
-                                        type="button"
-                                        class="preview-button"
-                                        data-doc-id="<?php echo (int)$document['id']; ?>"
-                                        data-doc-name="<?php echo htmlspecialchars($document_title); ?>"
-                                    >
-                                        <i class="fas fa-eye"></i>
-                                        Visualizar
-                                    </button>
-                                </td>
-
-                                <td><?php echo htmlspecialchars(approveDocumentsFormatDate($document['uploaded_at'] ?? null)); ?></td>
-
-                                <?php if (approveDocumentsCanManage($user_level)): ?>
-                                    <td>
-                                        <div class="action-buttons">
-                                            <form method="POST">
-                                                <input type="hidden" name="action" value="approve">
-                                                <input type="hidden" name="document_id" value="<?php echo (int)$document['id']; ?>">
-                                                <button type="submit" class="btn-approve" title="Aprovar documento">
-                                                    <i class="fas fa-check"></i>
-                                                    Aprovar
-                                                </button>
-                                            </form>
-
-                                            <form method="POST">
-                                                <input type="hidden" name="action" value="reject">
-                                                <input type="hidden" name="document_id" value="<?php echo (int)$document['id']; ?>">
-                                                <button type="submit" class="btn-reject" title="Rejeitar documento">
-                                                    <i class="fas fa-times"></i>
-                                                    Rejeitar
-                                                </button>
-                                            </form>
-                                        </div>
-                                    </td>
-                                <?php endif; ?>
-                            </tr>
-                        <?php endforeach; ?>
+                    <?php foreach ($pending_documents as $document): ?>
+                        <?php $document_title = approveDocumentsFormatTitle((string)($document['original_name'] ?? '')); $is_pdf = approveDocumentsIsPdf($document); ?>
+                        <tr>
+                            <td><div class="document-identity"><span class="document-icon is-<?php echo $is_pdf ? 'pdf' : 'text'; ?>"><i class="far fa-file-<?php echo $is_pdf ? 'pdf' : 'lines'; ?>"></i></span><div><strong><?php echo htmlspecialchars($document_title, ENT_QUOTES, 'UTF-8'); ?></strong><small><?php echo $is_pdf ? 'Arquivo PDF' : 'Documento de texto'; ?></small></div></div></td>
+                            <td><div class="sender-info"><strong><?php echo htmlspecialchars($document['username'] ?? '-', ENT_QUOTES, 'UTF-8'); ?></strong><span><?php echo htmlspecialchars($document['email'] ?? '-', ENT_QUOTES, 'UTF-8'); ?></span></div></td>
+                            <td><span class="upload-date"><i class="far fa-calendar"></i><?php echo htmlspecialchars(approveDocumentsFormatDate($document['uploaded_at'] ?? null), ENT_QUOTES, 'UTF-8'); ?></span></td>
+                            <td><span class="pending-status"><i class="fas fa-circle"></i>Pendente</span></td>
+                            <td><button type="button" class="preview-button" data-doc-id="<?php echo (int)$document['id']; ?>" data-doc-name="<?php echo htmlspecialchars($document_title, ENT_QUOTES, 'UTF-8'); ?>"><i class="far fa-eye"></i> Visualizar</button></td>
+                            <?php if (approveDocumentsCanManage($user_level)): ?><td><div class="document-actions"><form method="POST" data-confirm="Aprovar este documento?"><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($approve_documents_csrf, ENT_QUOTES, 'UTF-8'); ?>"><input type="hidden" name="action" value="approve"><input type="hidden" name="document_id" value="<?php echo (int)$document['id']; ?>"><button type="submit" class="action-button is-approve" title="Aprovar documento" aria-label="Aprovar documento"><i class="fas fa-check"></i></button></form><form method="POST" data-confirm="Rejeitar este documento? Essa ação o removerá da fila."><input type="hidden" name="csrf_token" value="<?php echo htmlspecialchars($approve_documents_csrf, ENT_QUOTES, 'UTF-8'); ?>"><input type="hidden" name="action" value="reject"><input type="hidden" name="document_id" value="<?php echo (int)$document['id']; ?>"><button type="submit" class="action-button is-reject" title="Rejeitar documento" aria-label="Rejeitar documento"><i class="fas fa-times"></i></button></form></div></td><?php endif; ?>
+                        </tr>
+                    <?php endforeach; ?>
                     </tbody>
                 </table>
             </div>
         <?php else: ?>
-            <div class="empty-state">
-                <i class="fas fa-check-circle"></i>
-                <h2>Nenhum documento pendente</h2>
-                <p>Todos os documentos foram processados.</p>
-            </div>
+            <div class="approve-empty"><span><i class="fas fa-check"></i></span><h2>Nenhum documento pendente</h2><p>A fila de aprovação está em dia.</p></div>
         <?php endif; ?>
     </section>
-</div>
+</main>
 
 <div id="previewModal" class="preview-modal" aria-hidden="true">
-    <div class="preview-modal-content" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
-        <div class="preview-modal-header">
-            <h2 id="previewTitle">Pré-visualização do Documento</h2>
-            <button type="button" class="preview-modal-close" data-preview-close aria-label="Fechar pré-visualização">
-                &times;
-            </button>
-        </div>
-
-        <div id="previewBody" class="preview-modal-body">
-            <p class="preview-loading">
-                <i class="fas fa-spinner fa-spin"></i>
-                Carregando...
-            </p>
-        </div>
-
-        <div class="preview-modal-footer">
-            <button type="button" class="btn-modal-close" data-preview-close>Fechar</button>
-        </div>
+    <div class="preview-dialog" role="dialog" aria-modal="true" aria-labelledby="previewTitle">
+        <header class="preview-header"><div><span>Pré-visualização</span><h2 id="previewTitle">Documento</h2></div><button type="button" class="preview-close" data-preview-close aria-label="Fechar"><i class="fas fa-times"></i></button></header>
+        <div id="previewBody" class="preview-body"><p class="preview-loading"><i class="fas fa-spinner fa-spin"></i> Carregando documento...</p></div>
+        <footer class="preview-footer"><button type="button" class="approve-button is-secondary" data-preview-close>Fechar</button></footer>
     </div>
 </div>

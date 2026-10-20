@@ -89,6 +89,8 @@ if ($notices_result) {
     $notices = $notices_result->fetch_all(MYSQLI_ASSOC);
 }
 
+$banners = indexActiveBanners($conn);
+
 require __DIR__ . '/includes/layout_start.php';
 require __DIR__ . '/includes/views/index-view.php';
 require __DIR__ . '/includes/layout_end.php';

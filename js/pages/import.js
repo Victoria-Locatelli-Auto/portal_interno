@@ -4,9 +4,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const fileInfo = document.getElementById('fileInfo');
     const fileInput = document.getElementById('pdf_file');
     const fileName = document.getElementById('fileName');
+    const fileError = document.querySelector('[data-file-error]');
     const resetFileButton = document.getElementById('resetFileButton');
     const textContent = document.getElementById('text_content');
     const charCount = document.getElementById('char-count');
+    const tabButtons = [...document.querySelectorAll('.import-tab')];
+    const tabPanels = [...document.querySelectorAll('.import-tab-panel')];
+    const maxFileSize = Number(page?.dataset.maxFileSize) || 50 * 1024 * 1024;
+    const maxFileSizeMb = Number(page?.dataset.maxFileSizeMb) || 50;
+
+    const showFileError = (message) => {
+        if (!fileError) {
+            return;
+        }
+
+        fileError.textContent = message;
+        fileError.classList.toggle('is-hidden', message === '');
+    };
 
     const resetFile = () => {
         if (!fileInput || !uploadArea || !fileInfo) {
@@ -14,8 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
         }
 
         fileInput.value = '';
-        uploadArea.classList.remove('is-hidden');
+        uploadArea.classList.remove('is-hidden', 'dragover');
         fileInfo.classList.add('is-hidden');
+        showFileError('');
     };
 
     const handleFileSelect = (files) => {
@@ -25,30 +40,57 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        if (file.type !== 'application/pdf') {
-            alert('Por favor, selecione um arquivo PDF válido');
+        const hasPdfExtension = file.name.toLowerCase().endsWith('.pdf');
+        const hasPdfType = file.type === '' || file.type === 'application/pdf';
+
+        if (!hasPdfExtension || !hasPdfType) {
             resetFile();
+            showFileError('Selecione um arquivo PDF válido.');
             return;
         }
 
-        if (file.size > 50 * 1024 * 1024) {
-            alert('Arquivo muito grande. Máximo: 50MB');
+        if (file.size <= 0 || file.size > maxFileSize) {
             resetFile();
+            showFileError(`O arquivo deve ter no máximo ${maxFileSizeMb} MB.`);
             return;
         }
 
-        fileName.textContent = `${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`;
+        const sizeInMb = (file.size / 1024 / 1024).toLocaleString('pt-BR', {
+            minimumFractionDigits: 2,
+            maximumFractionDigits: 2,
+        });
+
+        fileName.textContent = `${file.name} (${sizeInMb} MB)`;
         uploadArea.classList.add('is-hidden');
         fileInfo.classList.remove('is-hidden');
+        showFileError('');
     };
 
-    document.querySelectorAll('.tab-button').forEach((button) => {
-        button.addEventListener('click', () => {
-            document.querySelectorAll('.tab-button').forEach((item) => item.classList.remove('active'));
-            document.querySelectorAll('.tab-content').forEach((content) => content.classList.remove('active'));
+    const activateTab = (activeButton) => {
+        tabButtons.forEach((button) => {
+            const isActive = button === activeButton;
+            button.classList.toggle('is-active', isActive);
+            button.setAttribute('aria-selected', String(isActive));
+            button.tabIndex = isActive ? 0 : -1;
+        });
 
-            button.classList.add('active');
-            document.getElementById(button.dataset.tabTarget)?.classList.add('active');
+        tabPanels.forEach((panel) => {
+            panel.hidden = panel.id !== activeButton.dataset.tabTarget;
+        });
+    };
+
+    tabButtons.forEach((button, index) => {
+        button.addEventListener('click', () => activateTab(button));
+        button.addEventListener('keydown', (event) => {
+            if (!['ArrowLeft', 'ArrowRight'].includes(event.key)) {
+                return;
+            }
+
+            event.preventDefault();
+            const direction = event.key === 'ArrowRight' ? 1 : -1;
+            const nextIndex = (index + direction + tabButtons.length) % tabButtons.length;
+            tabButtons[nextIndex].focus();
+            activateTab(tabButtons[nextIndex]);
         });
     });
 
@@ -61,13 +103,8 @@ document.addEventListener('DOMContentLoaded', () => {
         updateCount();
     }
 
-    if (fileInput) {
-        fileInput.addEventListener('change', () => handleFileSelect(fileInput.files));
-    }
-
-    if (resetFileButton) {
-        resetFileButton.addEventListener('click', resetFile);
-    }
+    fileInput?.addEventListener('change', () => handleFileSelect(fileInput.files));
+    resetFileButton?.addEventListener('click', resetFile);
 
     if (uploadArea && fileInput) {
         uploadArea.addEventListener('dragover', (event) => {
@@ -83,10 +120,19 @@ document.addEventListener('DOMContentLoaded', () => {
             event.preventDefault();
             uploadArea.classList.remove('dragover');
 
-            if (event.dataTransfer.files.length > 0) {
-                fileInput.files = event.dataTransfer.files;
-                handleFileSelect(event.dataTransfer.files);
+            const droppedFiles = event.dataTransfer?.files;
+            if (!droppedFiles?.length) {
+                return;
             }
+
+            try {
+                fileInput.files = droppedFiles;
+            } catch (error) {
+                showFileError('Use o botão Selecionar arquivo para adicionar este PDF.');
+                return;
+            }
+
+            handleFileSelect(droppedFiles);
         });
     }
 
@@ -102,7 +148,7 @@ document.addEventListener('DOMContentLoaded', () => {
             return;
         }
 
-        select.innerHTML = '<option value="">-- Nenhuma subcategoria --</option>';
+        select.innerHTML = '<option value="">Nenhuma subcategoria</option>';
 
         if (!source.value) {
             container.classList.add('is-hidden');
@@ -114,10 +160,13 @@ document.addEventListener('DOMContentLoaded', () => {
             url.searchParams.set('menu_id', source.value);
 
             const response = await fetch(url.toString(), {
-                headers: {
-                    Accept: 'application/json',
-                },
+                headers: { Accept: 'application/json' },
             });
+
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+
             const data = await response.json();
             const submenus = Array.isArray(data.submenus) ? data.submenus : [];
 
@@ -136,7 +185,7 @@ document.addEventListener('DOMContentLoaded', () => {
             container.classList.remove('is-hidden');
         } catch (error) {
             container.classList.add('is-hidden');
-            console.error('Erro ao carregar submenus:', error);
+            console.error('Erro ao carregar subcategorias:', error);
         }
     };
 

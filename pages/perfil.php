@@ -1,4 +1,5 @@
 <?php
+
 require_once __DIR__ . '/../config/database.php';
 require_once __DIR__ . '/../includes/Session.php';
 require_once __DIR__ . '/../includes/helpers/profile.php';
@@ -11,63 +12,43 @@ if (!Session::isAuthenticated()) {
 }
 
 $base_url = appBaseUrl();
-$user_id = Session::getUserId();
+$user_id = (int)Session::getUserId();
 $first_name = Session::get('first_name') ?? 'Usuário';
+$custom_menus = profileSidebarItems($conn);
 
-$custom_menus = [];
-$menus_result = $conn->query("
-    SELECT id, title, url, icon, menu_type
-    FROM custom_menus
-    WHERE is_active = TRUE
-    ORDER BY order_position ASC
-");
+if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+    $_SESSION['profile_photo_feedback'] = profileHandlePhotoRequest(
+        $conn,
+        $user_id,
+        $_POST,
+        $_FILES,
+        dirname(__DIR__)
+    );
+    unset($_SESSION['profile_photo_csrf']);
 
-if ($menus_result) {
-    $custom_menus = $menus_result->fetch_all(MYSQLI_ASSOC);
+    header('Location: ' . $base_url . '/pages/perfil.php');
+    exit;
 }
 
-$stmt = $conn->prepare("
-    SELECT
-        usr.id,
-        usr.first_name,
-        usr.last_name,
-        usr.email,
-        usr.access_level,
-        usr.created_at,
-        usr.is_active,
-        usr.email_verified,
-        usr.id_funcao,
-        funcao.descricao,
-        usr.wpp_corporativo,
-        usr.id_filial,
-        fi.nome_filial
-        
-    FROM users usr
-    LEFT JOIN funcao ON funcao.id = usr.id_funcao
-    LEFT JOIN filiais fi ON fi.id = usr.id_filial
-    WHERE usr.id = ?
-");
-
-
-
-if (!$stmt) {
-    die('Erro SQL: ' . $conn->error);
-}
-
-$stmt->bind_param('i', $user_id);
-$stmt->execute();
-$result = $stmt->get_result();
-$user = $result->fetch_assoc();
+$user = profileFindUser($conn, $user_id);
 
 if (!$user) {
-    die('Usuário não encontrado');
+    http_response_code(404);
+    exit('Usuário não encontrado.');
 }
 
 $full_name = formatProfileName(($user['first_name'] ?? '') . ' ' . ($user['last_name'] ?? ''));
-$funcao_descricao = formatProfileRole($user['descricao'] ?? '');
+$funcao_descricao = formatProfileText($user['descricao'] ?? null);
+$filial_nome = formatProfileText($user['nome_filial'] ?? null);
+$whatsapp = formatProfileWhatsApp($user['wpp_corporativo'] ?? null);
+$registered_at = formatProfileDate($user['created_at'] ?? null);
+$profile_photo_url = profilePhotoUrl($base_url, $user['profile_photo'] ?? null);
+$profile_photo_csrf = profilePhotoCsrfToken();
+$profile_photo_feedback = profilePhotoFeedback();
 
 $page_title = 'Meu Perfil';
 $page_css = 'css/pages/perfil.css';
+$page_js = 'js/pages/perfil.js';
 
 require __DIR__ . '/../includes/layout_start.php';
 require __DIR__ . '/../includes/views/perfil-view.php';

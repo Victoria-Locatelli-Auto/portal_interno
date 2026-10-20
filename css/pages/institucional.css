@@ -1,85 +1,255 @@
+.main-area {
+    background: #f4f7fb;
+}
+
+.page-content {
+    padding: 42px 50px 40px;
+}
+
 .institutional-page {
-    color: #ffffff;
-}
-
-.institutional-wrap {
-    width: min(1180px, 100%);
+    width: min(100%, 1180px);
     margin: 0 auto;
-    text-align: center;
+    color: #061733;
+    --institutional-blue: #03285f;
+    --institutional-text: #10213b;
+    --institutional-muted: #61718a;
+    --institutional-border: #dfe6f0;
+    --institutional-soft: #f4f7fb;
+    --institutional-title-font: "Trebuchet MS", "Segoe UI", Arial, sans-serif;
 }
 
-.institutional-title {
-    font-size: clamp(36px, 5vw, 52px);
-    font-weight: 700;
-    margin-bottom: 24px;
+.institutional-page-header {
+    margin-bottom: 30px;
 }
 
-.institutional-cards {
+.institutional-page-heading {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.institutional-page-icon {
+    width: 68px;
+    height: 68px;
+    flex: 0 0 68px;
+    display: grid;
+    place-items: center;
+    color: var(--institutional-blue);
+    background: #e9f0fb;
+    border: 1px solid #d6e2f4;
+    border-radius: 8px;
+    font-size: 28px;
+}
+
+.institutional-page-kicker,
+.section-kicker {
+    display: block;
+    color: #60708d;
+    font-size: 12px;
+    font-weight: 800;
+    letter-spacing: 1.2px;
+    text-transform: uppercase;
+}
+
+.institutional-page-kicker {
+    margin-bottom: 6px;
+}
+
+.institutional-page-heading h1 {
+    margin: 0;
+    color: var(--institutional-blue);
+    font-family: var(--institutional-title-font);
+    font-size: clamp(32px, 4vw, 44px);
+    line-height: 1.08;
+    font-weight: 800;
+}
+
+.institutional-principles {
     display: grid;
     grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 22px;
-    margin-bottom: 26px;
+    gap: 16px;
+    margin-bottom: 22px;
 }
 
-.institutional-card,
-.institutional-section {
-    background: rgba(255, 255, 255, 0.92);
-    border-radius: 16px;
-    overflow: hidden;
-    color: #111827;
-}
-
-.institutional-card {
-    min-height: 210px;
-}
-
-.institutional-card h2,
-.institutional-section h2 {
-    background: var(--azul);
-    color: #ffffff;
-    padding: 12px;
-    font-size: 22px;
-    text-align: center;
-}
-
-.institutional-card p {
-    padding: 20px;
-    line-height: 1.7;
-    font-size: 16px;
-}
-
-.institutional-section {
-    margin-bottom: 24px;
-    text-align: left;
-}
-
-.institutional-section-body {
+.principle-card {
+    min-width: 0;
+    min-height: 220px;
     padding: 24px;
+    background: #ffffff;
+    border: 1px solid var(--institutional-border);
+    border-radius: 8px;
+    box-shadow: 0 10px 26px rgba(16, 32, 64, 0.05);
+    transition: transform 0.18s ease, border-color 0.18s ease, box-shadow 0.18s ease;
 }
 
-.institutional-section-body p {
-    line-height: 1.9;
-    font-size: 16px;
+.principle-card:hover {
+    transform: translateY(-2px);
+    border-color: #b7c9e2;
+    box-shadow: 0 14px 30px rgba(16, 32, 64, 0.09);
 }
 
-.institutional-section-body p + p {
+.principle-icon,
+.section-icon {
+    display: grid;
+    place-items: center;
+    color: var(--institutional-blue);
+    background: #e9f0fb;
+    border: 1px solid #d6e2f4;
+    border-radius: 8px;
+}
+
+.principle-icon {
+    width: 48px;
+    height: 48px;
+    margin-bottom: 18px;
+    font-size: 21px;
+}
+
+.principle-card h2 {
+    margin: 0 0 10px;
+    color: var(--institutional-blue);
+    font-family: var(--institutional-title-font);
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.principle-card p {
+    margin: 0;
+    color: #4b5f7a;
+    font-size: 14px;
+    line-height: 1.65;
+}
+
+.institutional-section {
+    margin-bottom: 22px;
+    padding: 30px;
+    background: #ffffff;
+    border: 1px solid var(--institutional-border);
+    border-radius: 8px;
+    box-shadow: 0 14px 34px rgba(16, 32, 64, 0.06);
+}
+
+.institutional-section:last-child {
+    margin-bottom: 0;
+}
+
+.section-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid #e6ebf2;
+}
+
+.section-icon {
+    width: 44px;
+    height: 44px;
+    flex: 0 0 44px;
+    font-size: 18px;
+}
+
+.section-kicker {
+    margin-bottom: 4px;
+    font-size: 10px;
+}
+
+.section-heading h2 {
+    margin: 0;
+    color: var(--institutional-blue);
+    font-family: var(--institutional-title-font);
+    font-size: 23px;
+    font-weight: 800;
+}
+
+.institutional-history {
+    max-width: 920px;
+    margin: 0 auto;
+    padding-left: 20px;
+    border-left: 3px solid #d8e5f5;
+}
+
+.institutional-history p {
+    margin: 0;
+    color: #40526c;
+    font-size: 15px;
+    line-height: 1.8;
+}
+
+.institutional-history p + p {
     margin-top: 18px;
 }
 
 .manifesto-box {
-    padding: 18px;
+    padding: 14px;
+    background: var(--institutional-soft);
+    border: 1px solid #e1e7f0;
+    border-radius: 8px;
 }
 
 .manifesto-box img {
     width: 100%;
     max-width: 1000px;
-    border-radius: 10px;
+    height: auto;
     display: block;
     margin: 0 auto;
+    border-radius: 6px;
 }
 
 @media (max-width: 900px) {
-    .institutional-cards {
+    .page-content {
+        padding: 34px 28px;
+    }
+
+    .institutional-principles {
         grid-template-columns: 1fr;
+    }
+
+    .principle-card {
+        min-height: 0;
+    }
+}
+
+@media (max-width: 700px) {
+    .page-content {
+        padding: 26px 16px;
+    }
+
+    .institutional-page-heading {
+        align-items: flex-start;
+    }
+
+    .institutional-page-icon {
+        width: 54px;
+        height: 54px;
+        flex-basis: 54px;
+        font-size: 22px;
+    }
+
+    .institutional-page-heading h1 {
+        font-size: 30px;
+    }
+
+    .principle-card,
+    .institutional-section {
+        padding: 20px;
+    }
+
+    .institutional-history {
+        padding-left: 14px;
+    }
+}
+
+@media (max-width: 480px) {
+    .institutional-page-heading {
+        display: block;
+    }
+
+    .institutional-page-icon {
+        margin-bottom: 16px;
+    }
+
+    .section-heading {
+        align-items: flex-start;
     }
 }

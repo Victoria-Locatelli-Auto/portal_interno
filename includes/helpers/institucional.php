@@ -1,18 +1,33 @@
 <?php
 
+function institutionalSidebarItems(mysqli $conn): array
+{
+    $result = $conn->query("
+        SELECT id, title, url, icon, menu_type
+        FROM custom_menus
+        WHERE is_active = TRUE
+        ORDER BY order_position ASC
+    ");
+
+    return $result ? $result->fetch_all(MYSQLI_ASSOC) : [];
+}
+
 function institutionalCards(): array
 {
     return [
         [
             'title' => 'Missão',
+            'icon' => 'far fa-compass',
             'text' => 'Oferecer soluções de transporte de cargas e passageiros que maximizem a satisfação dos clientes nos diversos segmentos.',
         ],
         [
             'title' => 'Visão',
+            'icon' => 'far fa-eye',
             'text' => 'Ser referência no mercado pelo compromisso e transparência com seus clientes e colaboradores.',
         ],
         [
             'title' => 'Valores',
+            'icon' => 'far fa-handshake',
             'text' => 'Credibilidade, honestidade ética, valorização e desenvolvimento dos nossos colaboradores, trabalho em equipe, responsabilidade social e ambiental.',
         ],
     ];

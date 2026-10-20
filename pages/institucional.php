@@ -15,18 +15,7 @@ $first_name = Session::get('first_name') ?? 'Usuário';
 $page_title = 'Institucional';
 $page_css = 'css/pages/institucional.css';
 
-$custom_menus = [];
-$menus_result = $conn->query("
-    SELECT id, title, url, icon, menu_type
-    FROM custom_menus
-    WHERE is_active = TRUE
-    ORDER BY order_position ASC
-");
-
-if ($menus_result) {
-    $custom_menus = $menus_result->fetch_all(MYSQLI_ASSOC);
-}
-
+$custom_menus = institutionalSidebarItems($conn);
 $institutional_cards = institutionalCards();
 $institutional_history = institutionalHistory();
 

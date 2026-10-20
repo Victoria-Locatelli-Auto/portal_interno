@@ -29,18 +29,23 @@ if (!$menu) {
 
 $custom_menus = menuPageSidebarItems($conn);
 $submenus = menuPageSubmenus($conn, $menu_id);
-$documents_by_submenu = [];
+$requested_submenu_id = (int)($_GET['submenu_id'] ?? 0);
+$active_submenu_id = 0;
+$active_documents = [];
 $default_documents = [];
 
 if ($submenus) {
-    $documents_by_submenu = menuPageDocumentsBySubmenu($conn, $menu_id, $submenus);
+    $available_submenu_ids = array_map(static fn(array $submenu): int => (int)$submenu['id'], $submenus);
+    $active_submenu_id = in_array($requested_submenu_id, $available_submenu_ids, true)
+        ? $requested_submenu_id
+        : $available_submenu_ids[0];
+    $active_documents = menuPageDocuments($conn, $menu_id, $active_submenu_id);
 } else {
     $default_documents = menuPageDocuments($conn, $menu_id);
 }
 
 $page_title = $menu['title'];
 $page_css = 'css/pages/menu_page.css';
-$page_js = 'js/pages/menu_page.js';
 
 require __DIR__ . '/../includes/layout_start.php';
 require __DIR__ . '/../includes/views/menu-page-view.php';

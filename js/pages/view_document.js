@@ -3,24 +3,51 @@ document.addEventListener('DOMContentLoaded', () => {
     const backButton = document.querySelector('[data-go-back]');
     const deleteButton = document.querySelector('[data-delete-document]');
 
-    const copyToClipboard = () => {
-        const text = document.getElementById('extractedContent')?.innerText;
-
-        if (!text) {
+    const showCopyFeedback = () => {
+        if (!copyButton) {
             return;
         }
 
-        navigator.clipboard.writeText(text).then(() => {
-            alert('Conteúdo copiado para a área de transferência.');
-        }).catch(() => {
-            const textarea = document.createElement('textarea');
-            textarea.value = text;
-            document.body.appendChild(textarea);
-            textarea.select();
-            document.execCommand('copy');
-            document.body.removeChild(textarea);
-            alert('Conteúdo copiado para a área de transferência.');
-        });
+        const originalContent = copyButton.innerHTML;
+        copyButton.classList.add('is-copied');
+        copyButton.innerHTML = '<i class="fas fa-check" aria-hidden="true"></i><span>Texto copiado</span>';
+
+        window.setTimeout(() => {
+            copyButton.classList.remove('is-copied');
+            copyButton.innerHTML = originalContent;
+        }, 2000);
+    };
+
+    const copyWithFallback = (text) => {
+        const textarea = document.createElement('textarea');
+        textarea.value = text;
+        textarea.setAttribute('readonly', '');
+        textarea.style.position = 'fixed';
+        textarea.style.opacity = '0';
+        document.body.appendChild(textarea);
+        textarea.select();
+        document.execCommand('copy');
+        document.body.removeChild(textarea);
+    };
+
+    const copyToClipboard = async () => {
+        const text = document.getElementById('extractedContent')?.innerText;
+
+        if (!text || !copyButton) {
+            return;
+        }
+
+        try {
+            if (navigator.clipboard && window.isSecureContext) {
+                await navigator.clipboard.writeText(text);
+            } else {
+                copyWithFallback(text);
+            }
+
+            showCopyFeedback();
+        } catch (error) {
+            alert('Não foi possível copiar o conteúdo. Tente novamente.');
+        }
     };
 
     const deleteCurrentDocument = async () => {
@@ -68,8 +95,8 @@ document.addEventListener('DOMContentLoaded', () => {
     backButton?.addEventListener('click', () => history.back());
     deleteButton?.addEventListener('click', deleteCurrentDocument);
 
-    if (document.querySelector('.status-processando, .status-processing')) {
-        setTimeout(() => {
+    if (document.querySelector('.processing-message')) {
+        window.setTimeout(() => {
             location.reload();
         }, 5000);
     }

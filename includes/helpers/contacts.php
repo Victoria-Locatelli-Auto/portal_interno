@@ -1,22 +1,81 @@
 <?php
 
-function formatPersonName(string $name): string
+function formatCorporateText(?string $text): string
 {
-    $name = trim($name);
-    $name = mb_strtolower($name, 'UTF-8');
-    $name = mb_convert_case($name, MB_CASE_TITLE, 'UTF-8');
+    $text = trim((string)$text);
+
+    if ($text === '') {
+        return '-';
+    }
+
+    $text = mb_strtolower($text, 'UTF-8');
+    $text = mb_convert_case($text, MB_CASE_TITLE, 'UTF-8');
 
     $lower_words = ['Da', 'De', 'Do', 'Das', 'Dos', 'E'];
     foreach ($lower_words as $word) {
-        $name = preg_replace('/\b' . $word . '\b/u', mb_strtolower($word, 'UTF-8'), $name);
+        $text = preg_replace('/\b' . $word . '\b/u', mb_strtolower($word, 'UTF-8'), $text);
     }
 
     $upper_words = ['Rh', 'Ti', 'Mcm'];
     foreach ($upper_words as $word) {
-        $name = preg_replace('/\b' . $word . '\b/u', strtoupper($word), $name);
+        $text = preg_replace('/\b' . $word . '\b/u', strtoupper($word), $text);
     }
 
-    return $name;
+    return $text;
+}
+
+function formatPersonName(string $name): string
+{
+    return formatCorporateText($name);
+}
+
+function formatCorporateWhatsApp(?string $phone): string
+{
+    $original = trim((string)$phone);
+
+    if ($original === '') {
+        return '-';
+    }
+
+    $digits = preg_replace('/\D+/', '', $original);
+
+    if (strlen($digits) === 13 && str_starts_with($digits, '55')) {
+        $digits = substr($digits, 2);
+    } elseif (strlen($digits) === 12 && str_starts_with($digits, '55')) {
+        $digits = substr($digits, 2);
+    }
+
+    if (strlen($digits) === 11) {
+        return sprintf(
+            '(%s) %s %s-%s',
+            substr($digits, 0, 2),
+            substr($digits, 2, 1),
+            substr($digits, 3, 4),
+            substr($digits, 7, 4)
+        );
+    }
+
+    if (strlen($digits) === 10) {
+        return sprintf(
+            '(%s) %s-%s',
+            substr($digits, 0, 2),
+            substr($digits, 2, 4),
+            substr($digits, 6, 4)
+        );
+    }
+
+    return $original;
+}
+
+function contactProfilePhotoUrl(string $base_url, ?string $path): ?string
+{
+    $path = str_replace('\\', '/', trim((string)$path));
+
+    if (!preg_match('#^uploads/profile/[a-zA-Z0-9._-]+$#', $path)) {
+        return null;
+    }
+
+    return rtrim($base_url, '/') . '/' . $path;
 }
 
 function fullName(array $row): string
@@ -54,6 +113,7 @@ function contactsBaseSelect(): string
             u.access_level,
             u.is_active,
             u.wpp_corporativo,
+            u.profile_photo,
             NULL AS branch,
             u.id_funcao,
             u.id_filial,

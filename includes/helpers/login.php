@@ -159,6 +159,11 @@ function loginHandleLogin(mysqli $conn, array $post, string $base_url): string
 
         unset($_SESSION['redirect_after_login']);
 
+        if (!Session::hasCompleteProfile()) {
+            Session::set('profile_completion_return_url', $redirect_after_login);
+            $redirect_after_login = $base_url . '/pages/editar_funcionario.php?id=' . (int)$result['user_id'];
+        }
+
         header('Location: ' . $redirect_after_login);
         exit;
     }

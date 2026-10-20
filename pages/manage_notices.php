@@ -21,15 +21,31 @@ if (!manageNoticesCanAccess($user)) {
 
 $success_msg = '';
 $error_msg = '';
+$notice_form = [
+    'title' => '',
+    'description' => '',
+    'content' => '',
+];
 
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $result = manageNoticesHandleAction($conn, $_POST);
     $success_msg = $result['success'];
     $error_msg = $result['error'];
+    unset($_SESSION['manage_notices_csrf']);
+
+    if ($error_msg !== '' && ($_POST['action'] ?? '') === 'add_notice') {
+        $notice_form = [
+            'title' => trim((string)($_POST['title'] ?? '')),
+            'description' => trim((string)($_POST['description'] ?? '')),
+            'content' => trim((string)($_POST['content'] ?? '')),
+        ];
+    }
 }
 
 $custom_menus = manageNoticesSidebarItems($conn);
 $notices_list = manageNoticesList($conn);
+$notice_stats = manageNoticesStats($notices_list);
+$manage_notices_csrf = manageNoticesCsrfToken();
 $page_title = 'Gerenciar Avisos';
 $page_css = 'css/pages/manage_notices.css';
 $page_js = 'js/pages/manage_notices.js';

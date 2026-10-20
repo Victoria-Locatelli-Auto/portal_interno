@@ -1,25 +1,63 @@
-# Local/system files
-.vscode/
+# Operating system and editor files
 .DS_Store
 Thumbs.db
-*.log
+Desktop.ini
+.idea/
+.vscode/
+*.code-workspace
+/settings.json
 
-# Dependencies and binaries
+# Dependencies and local binaries
 /vendor/
+/node_modules/
 composer.phar
 
-# Runtime/generated files
-/uploads/
+# Runtime files, caches and logs
 /tmp/
+/sessions/
+/storage/sessions/
+*.log
 *.cache
+.phpunit.result.cache
+.php-cs-fixer.cache
 
-# Local configuration with secrets
+# User-generated uploads
+/uploads/*
+!/uploads/banners/
+/uploads/banners/*
+!/uploads/banners/.htaccess
+!/uploads/profile/
+/uploads/profile/*
+!/uploads/profile/.htaccess
+!/uploads/systems/
+/uploads/systems/*
+!/uploads/systems/.htaccess
+
+# Local configuration and secrets
 /config/*.php
 !/config/*.example.php
 .env
 .env.*
+!.env.example
 !/portalmcm/.env.example
 
-# Generated/temporary diagnostics
-process.log
-uploads/process.log
+# Backups and temporary editor files
+*.bak
+*.backup
+*.old
+*.orig
+*.rej
+*.swp
+*.swo
+*.tmp
+*.temp
+*~
+*.zip
+*.rar
+*.7z
+/Nova pasta/
+
+# Local diagnostics
+/diagnostico_upload.php
+/process.log
+/uploads/process.log

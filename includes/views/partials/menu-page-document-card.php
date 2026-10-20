@@ -35,12 +35,6 @@
             <?php echo htmlspecialchars(menuPageDocumentDate($doc['uploaded_at'] ?? null)); ?>
         </div>
 
-        <div>
-            <span class="document-status status-<?php echo htmlspecialchars($doc['status'] ?? ''); ?>">
-                <?php echo htmlspecialchars(menuPageStatusLabel($doc['status'] ?? '')); ?>
-            </span>
-        </div>
-
         <a href="<?php echo $base_url; ?>/pages/view_document.php?id=<?php echo (int)$doc['id']; ?>" class="btn-view">
             <i class="fas fa-eye"></i>
             Visualizar

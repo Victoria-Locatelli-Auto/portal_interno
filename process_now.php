@@ -1,56 +1,49 @@
 <?php
-/**
- * Processador de Documentos - Chamado via AJAX ou Form
- * Não mostra página HTML, apenas processa e retorna JSON ou redireciona
- */
-
 require_once __DIR__ . '/includes/Session.php';
+require_once __DIR__ . '/config/database.php';
+require_once __DIR__ . '/includes/Document.php';
+require_once __DIR__ . '/includes/helpers/approve_documents.php';
 
 Session::start();
-
-// Verifica se está autenticado e é admin
 if (!Session::isAuthenticated()) {
     http_response_code(401);
-    die('Não autorizado');
+    exit('Não autorizado.');
+}
+if ($_SERVER['REQUEST_METHOD'] !== 'POST') {
+    http_response_code(405);
+    exit('Método não permitido.');
 }
 
-require_once __DIR__ . '/config/database.php';
-
-$user_id = Session::getUserId();
-$result = $conn->query("SELECT access_level FROM users WHERE id = $user_id");
-$user = $result->fetch_assoc();
-
-if (!$user || $user['access_level'] !== 'admin') {
+$user_level = approveDocumentsUserLevel($conn, (int)Session::getUserId());
+if (!approveDocumentsCanManage($user_level)) {
     http_response_code(403);
-    die('Acesso negado');
+    exit('Acesso negado.');
+}
+if (!approveDocumentsValidCsrf($_POST)) {
+    Session::set('approve_documents_feedback', approveDocumentsResult('A sessão do formulário expirou. Atualize a página e tente novamente.', 'error'));
+    header('Location: pages/approve_documents.php');
+    exit;
 }
 
-// Inicia processamento
-ob_start(); // Captura output
+unset($_SESSION['approve_documents_csrf']);
+ob_start();
+require __DIR__ . '/process_documents.php';
+ob_end_clean();
 
-require_once __DIR__ . '/process_documents.php';
-
-$output = ob_get_clean();
-
-// Se é requisição AJAX, retorna JSON
-if (!empty($_SERVER['HTTP_X_REQUESTED_WITH']) && strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) == 'xmlhttprequest') {
-    // Extrai estatísticas do log
-    $log_file = appUploadAbsolutePath('process.log');
-    $log_content = @file_get_contents($log_file);
-    
+$is_ajax = strtolower((string)($_SERVER['HTTP_X_REQUESTED_WITH'] ?? '')) === 'xmlhttprequest';
+if ($is_ajax) {
+    $log_content = @file_get_contents(appUploadAbsolutePath('process.log')) ?: '';
     preg_match('/Sucesso: (\d+) \| Erros: (\d+)/', $log_content, $matches);
-    
-    header('Content-Type: application/json');
+    header('Content-Type: application/json; charset=utf-8');
     echo json_encode([
         'success' => true,
-        'message' => 'Processamento concluído',
+        'message' => 'Processamento concluído.',
         'success_count' => (int)($matches[1] ?? 0),
-        'error_count' => (int)($matches[2] ?? 0)
-    ]);
-} else {
-    // Se é form normal, redireciona com mensagem
-    $_SESSION['process_message'] = '✓ Processamento concluído! Atualize a página para ver os resultados.';
-    header('Location: pages/approve_documents.php');
+        'error_count' => (int)($matches[2] ?? 0),
+    ], JSON_UNESCAPED_UNICODE);
+    exit;
 }
+
+Session::set('approve_documents_feedback', approveDocumentsResult('Processamento concluído. A lista de documentos foi atualizada.', 'success'));
+header('Location: pages/approve_documents.php');
 exit;
-?>
